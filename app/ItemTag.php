@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AccessToken extends Model
+class ItemTag extends Model
 {
     //
 }
