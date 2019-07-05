@@ -16,7 +16,6 @@ pipeline {
                     sh 'docker-compose run --rm --entrypoint \'vendor/bin/phpunit\' laravel'
                 }
             }
-			}
         }
     }
 }
