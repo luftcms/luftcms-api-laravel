@@ -1,8 +1,6 @@
 pipeline {
 	agent {
-		docker {
-			image 'sirnarsh/laravel-docker'
-		}
+		none
 	}
 	stages {
 		stage('testing') {
