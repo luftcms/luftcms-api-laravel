@@ -1,23 +1,16 @@
-pipeline {
-	agent {
-		none
-	}
-	stages {
-		stage('testing') {
-			steps {
-				script {
-                    sh 'sudo rm /usr/local/bin/docker-compose'
-                    sh 'curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose'
-                    sh 'chmod +x docker-compose'
-                    sh 'sudo mv docker-compose /usr/local/bin'
-                    sh 'cp .env.testing .env'
-                    sh 'docker-compose up -d'
-                    sh 'docker-compose run --rm --entrypoint \'composer install\' laravel'
-                    sh 'docker-compose run --rm --entrypoint \'php artisan migrate --force\' laravel'
-                    sh 'docker-compose run --rm --entrypoint \'php artisan db:seed\' laravel'
-                    sh 'docker-compose run --rm --entrypoint \'vendor/bin/phpunit\' laravel'
-                }
-            }
+node {
+    checkout scm
+    docker.image('mysql:5.7').withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw"') { c ->
+        docker.image('mysql:5.7').inside("--link ${c.id}:db") {
+            /* Wait until mysql service is up */
+            sh 'while ! mysqladmin ping -hdb --silent; do sleep 1; done'
+        }
+        docker.image('sirnarsh/laravel-docker').inside("--link ${c.id}:db") {
+            sh 'composer install --dev'
+            sh 'cp .env.testing .env'
+            sh 'php artisan migrate --force'
+            sh 'php artisan db:seed'
+            sh 'vendor/bin/phpunit --debug'
         }
     }
 }
