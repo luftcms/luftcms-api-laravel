@@ -8,15 +8,14 @@ pipeline {
 		stage('testing') {
 			steps {
 				script {
-					docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=homestead" -e "MYSQL_USER=homestead" -e "MYSQL_PASSWORD=secret" -e "MYSQL_ROOT_PASSWORD=secret" -p 3306:3306') {
-						c - >
-							sh 'composer install'
-						sh 'cp .env.testing .env'
-						sh 'php artisan migrate --force'
-						sh 'php artisan db:seed'
-						sh 'vendor/bin/phpunit'
-					}
-				}
+                    sh 'cp .env.testing .env'
+                    sh 'docker-compose up -d'
+                    sh 'docker-compose run --rm --entrypoint \'composer install\' laravel'
+                    sh 'docker-compose run --rm --entrypoint \'php artisan migrate --force\' laravel'
+                    sh 'docker-compose run --rm --entrypoint \'php artisan db:seed\' laravel'
+                    sh 'docker-compose run --rm --entrypoint \'vendor/bin/phpunit\' laravel'
+                }
+            }
 			}
         }
     }
