@@ -1,11 +1,11 @@
 node {
     checkout scm
-    docker.image('mysql:5.7').withRun('-e "MYSQL_ROOT_PASSWORD=my-secret-pw"') { c ->
-        docker.image('mysql:5.7').inside("--link ${c.id}:db") {
+    docker.image('mysql:5.7').withRun('-e "MYSQL_DATABASE=homestead" -e "MYSQL_USER=homestead" -e "MYSQL_PASSWORD=secret" -e "MYSQL_ROOT_PASSWORD=secret""') { c ->
+        docker.image('mysql:5.7').inside("--link ${c.id}:database") {
             /* Wait until mysql service is up */
-            sh 'while ! mysqladmin ping -hdb --silent; do sleep 1; done'
+            sh 'while ! mysqladmin ping -hdatabase --silent; do sleep 1; done'
         }
-        docker.image('sirnarsh/laravel-docker').inside("--link ${c.id}:db") {
+        docker.image('sirnarsh/laravel-docker').inside("--link ${c.id}:database") {
             sh 'composer install --dev'
             sh 'cp .env.testing .env'
             sh 'php artisan migrate --force'
