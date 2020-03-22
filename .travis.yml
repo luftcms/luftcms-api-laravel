@@ -18,4 +18,4 @@ script:
   - docker-compose run --rm --entrypoint 'composer install' laravel
   - docker-compose run --rm --entrypoint 'php artisan migrate --force' laravel
   - docker-compose run --rm --entrypoint 'php artisan db:seed' laravel
-  - docker-compose run --rm --entrypoint 'vendor/bin/phpunit' laravel
+  - docker-compose run --rm --entrypoint 'vendor/bin/phpunit --debug' laravel

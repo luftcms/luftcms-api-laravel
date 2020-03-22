@@ -16,3 +16,13 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:api')->group(function () {
+   Route::apiResource('users', 'UserController');
+   Route::apiResource('items', 'ItemController');
+   Route::apiResource('item_tags', 'ItemTagController');
+   Route::apiResource('tags', 'TagController');
+   Route::apiResource('type', 'TypeController');
+   Route::apiResource('type', 'TypeController');
+
+});
